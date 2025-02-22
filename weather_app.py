@@ -40,22 +40,27 @@ def get_forecast(city):
         return {"error": f"Error fetching data: {response.status_code}"}
 
 if __name__ == "__main__":
-    city = input("Enter city name: ")
-    
-    weather = get_weather(city)
-    if "error" in weather:
-        print(weather["error"])
-    else:
-        print(f"\nCurrent Weather in {weather['city']}:")
-        print(f"Temperature: {weather['temperature']}°C")
-        print(f"Condition: {weather['weather']}")
-        print(f"Humidity: {weather['humidity']}%")
-        print(f"Wind Speed: {weather['wind_speed']} m/s")
-
-        print("\n5-Day Forecast:")
-        forecast = get_forecast(city)
-        if "error" in forecast:
-            print(forecast["error"])
+    while True:
+        city = input("\nEnter city name (or type 'exit' to quit): ").strip()
+        
+        if city.lower() == "exit":
+            print("Exiting program. Goodbye!")
+            break
+        
+        weather = get_weather(city)
+        if "error" in weather:
+            print(weather["error"])
         else:
-            for day in forecast:
-                print(f"{day['date_time']}: {day['temperature']}°C, {day['weather']}, Wind: {day['wind_speed']} m/s")
+            print(f"\nCurrent Weather in {weather['city']}:")
+            print(f"Temperature: {weather['temperature']}°C")
+            print(f"Condition: {weather['weather']}")
+            print(f"Humidity: {weather['humidity']}%")
+            print(f"Wind Speed: {weather['wind_speed']} m/s")
+
+            print("\n5-Day Forecast:")
+            forecast = get_forecast(city)
+            if "error" in forecast:
+                print(forecast["error"])
+            else:
+                for day in forecast:
+                    print(f"{day['date_time']}: {day['temperature']}°C, {day['weather']}, Wind: {day['wind_speed']} m/s")
