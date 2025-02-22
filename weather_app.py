@@ -4,8 +4,8 @@ API_KEY = "d871280b8eb5a48ae516fc3e0744912c"
 BASE_URL = "https://api.openweathermap.org/data/2.5/"
 
 def get_weather(city):
-    """Fetch current weather data for a given city."""
-    url = f"{BASE_URL}weather?q={city}&appid={API_KEY}&units=metric"
+    """Fetch current weather data for a given city (Fahrenheit)."""
+    url = f"{BASE_URL}weather?q={city}&appid={API_KEY}&units=imperial"
     response = requests.get(url)
     
     if response.status_code == 200:
@@ -21,8 +21,8 @@ def get_weather(city):
         return {"error": f"Error fetching data: {response.status_code}"}
 
 def get_forecast(city):
-    """Fetch 5-day weather forecast for a given city."""
-    url = f"{BASE_URL}forecast?q={city}&appid={API_KEY}&units=metric"
+    """Fetch 5-day weather forecast for a given city (Fahrenheit)."""
+    url = f"{BASE_URL}forecast?q={city}&appid={API_KEY}&units=imperial"
     response = requests.get(url)
     
     if response.status_code == 200:
@@ -52,10 +52,10 @@ if __name__ == "__main__":
             print(weather["error"])
         else:
             print(f"\nCurrent Weather in {weather['city']}:")
-            print(f"Temperature: {weather['temperature']}°C")
+            print(f"Temperature: {weather['temperature']}°F")
             print(f"Condition: {weather['weather']}")
             print(f"Humidity: {weather['humidity']}%")
-            print(f"Wind Speed: {weather['wind_speed']} m/s")
+            print(f"Wind Speed: {weather['wind_speed']} mph")
 
             print("\n5-Day Forecast:")
             forecast = get_forecast(city)
@@ -63,4 +63,4 @@ if __name__ == "__main__":
                 print(forecast["error"])
             else:
                 for day in forecast:
-                    print(f"{day['date_time']}: {day['temperature']}°C, {day['weather']}, Wind: {day['wind_speed']} m/s")
+                    print(f"{day['date_time']}: {day['temperature']}°F, {day['weather']}, Wind: {day['wind_speed']} mph")
