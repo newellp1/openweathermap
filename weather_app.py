@@ -26,7 +26,7 @@ def get_weather(location, is_zip=False):
         return {"error": f"Error fetching data: {response.status_code}"}
 
 def get_forecast(location, is_zip=False):
-    """Fetch 5-day weather forecast for a given city, state, or ZIP code."""
+    """Fetch 5-day weather forecast (one entry per day at 12:00 PM)."""
     
     if is_zip:
         url = f"{BASE_URL}forecast?zip={location},US&appid={API_KEY}&units=imperial"
@@ -38,13 +38,26 @@ def get_forecast(location, is_zip=False):
     if response.status_code == 200:
         data = response.json()
         forecast_list = []
-        for forecast in data["list"][:5]:  # Get first 5 forecast entries
-            forecast_list.append({
-                "date_time": forecast["dt_txt"],
-                "temperature": forecast["main"]["temp"],
-                "weather": forecast["weather"][0]["description"],
-                "wind_speed": forecast["wind"]["speed"]
-            })
+        seen_dates = set()
+
+        for forecast in data["list"]:
+            date_time = forecast["dt_txt"]  # Example: "2025-02-23 12:00:00"
+            date = date_time.split(" ")[0]  # Extract "2025-02-23"
+
+            # Only add forecast if it's for 12:00 PM and not already added
+            if "12:00:00" in date_time and date not in seen_dates:
+                forecast_list.append({
+                    "date": date,
+                    "temperature": forecast["main"]["temp"],
+                    "weather": forecast["weather"][0]["description"],
+                    "wind_speed": forecast["wind"]["speed"]
+                })
+                seen_dates.add(date)
+
+            # Stop once we have 5 days of forecasts
+            if len(forecast_list) == 5:
+                break
+
         return forecast_list
     else:
         return {"error": f"Error fetching data: {response.status_code}"}
@@ -85,4 +98,4 @@ if __name__ == "__main__":
                 print(forecast["error"])
             else:
                 for day in forecast:
-                    print(f"{day['date_time']}: {day['temperature']}°F, {day['weather']}, Wind: {day['wind_speed']} mph")
+                    print(f"{day['date']}: {day['temperature']}°F, {day['weather']}, Wind: {day['wind_speed']} mph")
