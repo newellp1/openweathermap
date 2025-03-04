@@ -9,4 +9,5 @@ A simple Python app that fetches weather from OpenWeatherMap API
 - Update README.md with recent changes
 
 ## Issues
+- The comments in README.md would not show up in GitHub.  
 
